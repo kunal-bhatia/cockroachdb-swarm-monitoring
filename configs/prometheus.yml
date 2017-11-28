@@ -7,17 +7,41 @@ global:
   evaluation_interval: 10s
 
 rule_files:
-- "rules/alerts.rules"
-- "rules/aggregation.rules"
+  - "rules/alerts.rules"
+  - "rules/aggregation.rules"
 
 scrape_configs:
+  - job_name: 'prometheus'
+    dns_sd_configs:
+    - names:
+      - 'tasks.prometheus'
+      type: 'A'
+      port: 9090
+
+  - job_name: 'cadvisor'
+    dns_sd_configs:
+    - names:
+      - 'tasks.cadvisor'
+      type: 'A'
+      port: 8080
+
+  - job_name: 'node-exporter'
+    dns_sd_configs:
+    - names:
+      - 'tasks.node-exporter'
+      type: 'A'
+      port: 9100
+
+  - job_name: 'docker-exporter'
+    dns_sd_configs:
+    - names:
+      - 'tasks.docker-exporter'
+      type: 'A'
+      port: 4999
+
   - job_name: 'cockroach'
     metrics_path: '/_status/vars'
-
-    # Insecure mode:
     scheme: 'http'
-    # Secure mode:
-    # scheme: 'https'
 
     tls_config:
       insecure_skip_verify: true
